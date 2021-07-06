@@ -43,12 +43,20 @@ class Db
             \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
             \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
         );
-        $dbdriver = empty($db_config['dbdriver']) ? 'mysql' : $db_config['dbdriver'];
-        $hostname = empty($db_config['hostname']) ? 'localhost' : $db_config['hostname'];
-        // connection string
-        $sql = $dbdriver . ':host=' . $hostname . ';dbname=' . $db_config['dbname'];
+        // $dbdriver = empty($db_config['dbdriver']) ? 'mysql' : $db_config['dbdriver'];
+        // $hostname = empty($db_config['hostname']) ? 'localhost' : $db_config['hostname'];
+        // // connection string
+        // $sql = $dbdriver . ':host=' . $hostname . ';dbname=' . $db_config['dbname'];
+        // // connect to database
+        // $this->connection = new \PDO($sql, $db_config['username'], $db_config['password'], $options);
+        $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+        $server = $url["host"];
+        $username = $url["user"];
+        $password = $url["pass"];
+        $db = substr($url["path"], 1);
         // connect to database
-        $this->connection = new \PDO($sql, $db_config['username'], $db_config['password'], $options);
+        $this->connection = new \PDO($server, $username, $password, $db, $options);
+
         $this->connection->query("SET SESSION sql_mode = ''");
     }
 
